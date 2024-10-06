@@ -3,9 +3,12 @@ package com.h.elastic_sample.controller;
 import com.h.elastic_sample.data.dto.MultilangDocumentDto;
 import com.h.elastic_sample.data.model.MultilangDocument;
 import com.h.elastic_sample.service.MultilangDocumentService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/document")
@@ -27,24 +30,20 @@ public class MultilangDocumentController {
     }
 
     @GetMapping("/{id}")
-    public MultilangDocumentDto findById(@PathVariable String id) {
-        MultilangDocumentDto multilangDocumentDto = null;
-
-        Optional<MultilangDocument> optionalDocument = multilangDocumentService.findById(id);
-        if(optionalDocument.isPresent()){
-            multilangDocumentDto = new MultilangDocumentDto();
-            MultilangDocument multilangDocument = optionalDocument.get();
-
-            multilangDocumentDto.setIdentifier(multilangDocument.getIdentifier());
-            multilangDocumentDto.setBody(multilangDocument.getBody());
-        }
-
-        return multilangDocumentDto;
+    public ResponseEntity<MultilangDocumentDto> findById(@PathVariable String id) {
+        return multilangDocumentService.findById(id)
+                .map(document -> new MultilangDocumentDto(document.getIdentifier(), document.getBody()))
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public Iterable<MultilangDocument> findAll() {
-        return multilangDocumentService.findAll();
+    public ResponseEntity<Iterable<MultilangDocumentDto>> findAll() {
+        Iterable<MultilangDocumentDto> documents = StreamSupport.stream(multilangDocumentService.findAll().spliterator(), false)
+                .map(document -> new MultilangDocumentDto(document.getIdentifier(), document.getBody()))
+                .collect(Collectors.toList());
+
+        return documents.iterator().hasNext() ? ResponseEntity.ok(documents) : ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
