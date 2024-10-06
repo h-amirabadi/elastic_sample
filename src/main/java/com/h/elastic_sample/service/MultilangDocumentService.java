@@ -1,6 +1,6 @@
 package com.h.elastic_sample.service;
 
-import com.h.elastic_sample.data.entity.MultilangDocument;
+import com.h.elastic_sample.data.model.MultilangDocument;
 import com.h.elastic_sample.data.repo.MultilangDocumentRepo;
 import org.springframework.stereotype.Service;
 

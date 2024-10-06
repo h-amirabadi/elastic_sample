@@ -1,6 +1,7 @@
 package com.h.elastic_sample.controller;
 
-import com.h.elastic_sample.data.entity.MultilangDocument;
+import com.h.elastic_sample.data.dto.MultilangDocumentDto;
+import com.h.elastic_sample.data.model.MultilangDocument;
 import com.h.elastic_sample.service.MultilangDocumentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,20 +11,35 @@ import java.util.Optional;
 @RequestMapping("/api/document")
 public class MultilangDocumentController {
 
-    private MultilangDocumentService multilangDocumentService;
+    private final MultilangDocumentService multilangDocumentService;
 
     public MultilangDocumentController(MultilangDocumentService multilangDocumentService) {
         this.multilangDocumentService = multilangDocumentService;
     }
 
     @PostMapping
-    public MultilangDocument save(@RequestBody MultilangDocument entity) {
-        return multilangDocumentService.save(entity);
+    public MultilangDocument save(@RequestBody MultilangDocumentDto multilangDocumentDto) {
+        MultilangDocument multilangDocument =  new MultilangDocument();
+        multilangDocument.setIdentifier(multilangDocumentDto.getIdentifier());
+        multilangDocument.setBody(multilangDocumentDto.getBody());
+
+        return multilangDocumentService.save(multilangDocument);
     }
 
     @GetMapping("/{id}")
-    public Optional<MultilangDocument> findById(@PathVariable String id) {
-        return multilangDocumentService.findById(id);
+    public MultilangDocumentDto findById(@PathVariable String id) {
+        MultilangDocumentDto multilangDocumentDto = null;
+
+        Optional<MultilangDocument> optionalDocument = multilangDocumentService.findById(id);
+        if(optionalDocument.isPresent()){
+            multilangDocumentDto = new MultilangDocumentDto();
+            MultilangDocument multilangDocument = optionalDocument.get();
+
+            multilangDocumentDto.setIdentifier(multilangDocument.getIdentifier());
+            multilangDocumentDto.setBody(multilangDocument.getBody());
+        }
+
+        return multilangDocumentDto;
     }
 
     @GetMapping

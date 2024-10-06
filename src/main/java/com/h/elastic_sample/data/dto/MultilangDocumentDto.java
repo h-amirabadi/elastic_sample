@@ -1,4 +1,4 @@
-package com.h.elastic_sample.data.entity;
+package com.h.elastic_sample.data.dto;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -7,14 +7,11 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import java.util.Map;
 
 
-@Document(indexName = "document_object")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MultilangDocument {
+public class MultilangDocumentDto {
 
-    @Id
     private String identifier;
     private Map<String, String> body;
 }
