@@ -1,0 +1,22 @@
+{
+  "dynamic_templates": [
+    {
+      "body_fields": {
+        "path_match": "body.*",
+        "mapping": {
+          "type": "text",
+          "analyzer": "standard"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "identifier": {
+      "type": "keyword"
+    },
+    "body": {
+      "type": "object",
+      "dynamic": "true"
+    }
+  }
+}
