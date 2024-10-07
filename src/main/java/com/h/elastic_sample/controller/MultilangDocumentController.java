@@ -6,6 +6,7 @@ import com.h.elastic_sample.service.MultilangDocumentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -21,7 +22,7 @@ public class MultilangDocumentController {
 
     @PostMapping
     public MultilangDocument save(@RequestBody MultilangDocumentDto multilangDocumentDto) {
-        MultilangDocument multilangDocument =  new MultilangDocument();
+        MultilangDocument multilangDocument = new MultilangDocument();
         multilangDocument.setIdentifier(multilangDocumentDto.getIdentifier());
         multilangDocument.setBody(multilangDocumentDto.getBody());
 
@@ -43,6 +44,17 @@ public class MultilangDocumentController {
                 .collect(Collectors.toList());
 
         return documents.iterator().hasNext() ? ResponseEntity.ok(documents) : ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/search/{text}/{lang}")
+    public ResponseEntity<List<MultilangDocumentDto>> search(@PathVariable String text, @PathVariable String lang) {
+        try {
+            List<MultilangDocumentDto> results = multilangDocumentService.searchByTextAndLang(text, lang);
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
